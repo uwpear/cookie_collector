@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Çerez Toplayıcı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        .cookie-group {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .cookie-group button {
+            margin: 5px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cookie-group button:hover {
+            background-color: #0056b3;
+        }
+        .delete-btn {
+            background-color: #dc3545;
+        }
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <h1>Çerez Toplayıcı</h1>
+    <div id="loginForm">
+        <h2>Giriş Yap</h2>
+        <input type="text" id="username" placeholder="Kullanıcı Adı">
+        <input type="password" id="password" placeholder="Şifre">
+        <button id="loginBtn">Giriş Yap</button>
+    </div>
+    <div id="cookieCollector" style="display:none;">
+        <button id="collectCookiesBtn">Çerezleri Gönder</button>
+        <div id="cookieGroups"></div>
+    </div>
+
+    <script>
+        let cookieGroupCount = 0;
+
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('cookieCollector').style.display = 'block';
+                }else {
+                alert('Giriş başarısız!');
+                }
+            })
+            .catch(error => {
+                console.error('Giriş hatası:', error);
+            });
+        });
+
+        document.getElementById('collectCookiesBtn').addEventListener('click', () => {
+            const siteName = window.location.hostname;
+            const cookies = document.cookie.split(';').map(cookie => cookie.trim()).map(cookie => {
+                const [name, value] = cookie.split('=');
+                return { 'name': name, 'value': value };
+            });
+            const data = { 'siteName': siteName, 'cookies': cookies };
+
+            fetch('http://localhost:3000/collect-cookies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                cookieGroupCount++;
+                const cookieGroupDiv = document.createElement('div');
+                cookieGroupDiv.className = 'cookie-group';
+                const button = document.createElement('button');
+                button.textContent = `Çerez ${cookieGroupCount}`;
+                button.addEventListener('click', () => {
+                    const table = cookieGroupDiv.querySelector('table');
+                    table.style.display = table.style.display === 'none' ? 'table' : 'none';
+                });
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Sil';
+                deleteButton.className = 'delete-btn';
+                deleteButton.addEventListener('click', () => {
+                    cookieGroupDiv.remove();
+                    cookieGroupCount--;
+                    // Veritabanından silme işlemi burada yapılabilir
+                });
+                const table = document.createElement('table');
+                table.style.display = 'none';
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                const nameHeader = document.createElement('th');
+                nameHeader.textContent = 'Ad';
+                const valueHeader = document.createElement('th');
+                valueHeader.textContent = 'Değer';
+                headerRow.appendChild(nameHeader);
+                headerRow.appendChild(valueHeader);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                const tbody = document.createElement('tbody');
+                result.cookies.forEach(cookie => {
+                    const row = document.createElement('tr');
+                    const nameCell = document.createElement('td');
+                    const valueCell = document.createElement('td');
+                    nameCell.textContent = cookie.name;
+                    valueCell.textContent = cookie.value;
+                    row.appendChild(nameCell);
+                    row.appendChild(valueCell);
+                    tbody.appendChild(row);
+                });
+                table.appendChild(tbody);
+                cookieGroupDiv.appendChild(button);
+                cookieGroupDiv.appendChild(deleteButton);
+                cookieGroupDiv.appendChild(table);
+                document.getElementById('cookieGroups').appendChild(cookieGroupDiv);
+                console.log('Çerezler başarıyla gönderildi:', result);
+            })
+            .catch(error => {
+                console.error('Çerez gönderimi başarısız:', error);
+            });
+        });
+    </script>
+</body>
+</html>
