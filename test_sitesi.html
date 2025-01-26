@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie'li Web Sayfası</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .message {
+            padding: 20px;
+            background-color: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .welcome {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .first-visit {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="message welcome" id="welcomeMessage">Hoş geldiniz!</div>
+    <div class="message first-visit" id="firstVisitMessage" style="display:none;">İlk ziyaretiniz!</div>
+    <button id="createCookiesBtn">Çerezleri Oluştur</button>
+    <button id="deleteCookiesBtn">Çerezleri Sil</button>
+
+    <script>
+        function setCookie(name, value, days) {
+            const d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            const expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        function deleteCookie(name) {
+            document.cookie = name + '=; Max-Age=-99999999;';
+        }
+
+        function createRandomCookies() {
+            const randomValue1 = Math.random().toString(36).substring(2, 15);
+            const randomValue2 = Math.random().toString(36).substring(2, 15);
+            setCookie('auth_token', randomValue1, 7);
+            setCookie('session_id', randomValue2, 7);
+            alert('Rastgele çerezler oluşturuldu!');
+        }
+
+        function deleteAllCookies() {
+            const cookies = document.cookie.split(";");
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i];
+                const eqPos = cookie.indexOf("=");
+                const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+                document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+            }
+            alert('Tüm çerezler silindi!');
+        }
+
+        document.getElementById('createCookiesBtn').addEventListener('click', createRandomCookies);
+        document.getElementById('deleteCookiesBtn').addEventListener('click', deleteAllCookies);
+
+        window.onload = function() {
+            if (getCookie('visited') === null) {
+                document.getElementById('firstVisitMessage').style.display = 'inline-block';
+                setCookie('visited', 'true', 365);
+            } else {
+                document.getElementById('welcomeMessage').style.display = 'inline-block';
+            }
+        };
+    </script>
+</body>
+</html>
